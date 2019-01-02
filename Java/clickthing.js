@@ -17,6 +17,6 @@ function swapImage() {
 	}
 	else if (imgDisplayed.src.match("images/1.png")) {
 		imgDisplayed.src = "images/arduino-logo.png";
-		window.open("https://www.arduino.cc");
+		window.open("https://www.arduino.cc/en/Main/Software");
 	}
 }

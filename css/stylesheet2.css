@@ -21,7 +21,7 @@ padding-right: 24px;
 }
 
 html {
-background: radial-gradient(circle, SkyBlue, SkyBlue 50%, LightCyan 50%, SkyBlue);
+background: #808080;
 background-size: 8px 8px;
 }
 
@@ -34,7 +34,7 @@ text-align: right;
 }
 
 section {
-background-color: #FFFFFF;
+background-color: #00FFF0;
 margin-bottom: 24px;
 min-height: 320px;
 padding-left: 24px;
@@ -64,6 +64,9 @@ width: 50%;
 /* large images are 100% of the container elementâ€™s width */
 img.large {
 width: 100%;
+}
+section.menu {
+	background-color: #FF00FF;
 }
 body, section, img {
 border: 2px solid #B1B1B1;
