@@ -1,0 +1,39 @@
+
+
+body {
+	background: #0040FF;
+	font-family: sans-serif;
+	border: 2px solid Gray;
+	border-radius: 16px;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 1024px;
+	min-width: 1024px;
+	padding-top: 8px;
+	padding-bottom: 24px;
+	padding-left: 24px;
+	padding-right: 24px;
+	color:#FFFFFF;
+}
+html {
+	background: radial-gradient(circle, Red,SkyBlue 50%,LightCyan 50%,SkyBlue);
+	background-size: 8px 8px;
+	
+}
+h1 {
+	color: #F0FF00;
+	font-size: 32px;
+}
+h2 {
+	color: #FF00F0;
+}
+input.submit_button{
+	color:#FFFFFF;
+	background-color: #00F0C0;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
