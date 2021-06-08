@@ -1,0 +1,139 @@
+@charset "UTF-8";
+
+/* CSS Document */
+
+body {
+    background-color: #37474F;
+    font-family: Helvetica;
+}
+
+#wrapper {
+    width: 90%;
+    height: 400px;
+    margin: auto;
+    padding: 10px;
+    background-color: #37474F;
+    color: white;
+    font-size: 20px;
+}
+
+#fullwrapper {
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    padding: 0px;
+    background-color: #37474F;
+    color: white;
+    font-size: 20px;
+}
+
+a:link {
+    color: #9a3aee;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #a17cf1;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #a5a29d;
+    text-decoration: underline;
+}
+
+input[type=text] {
+    background-color: #9a3aee;
+    color: white;
+    font-size: 16px;
+    font-weight: 400;
+    width: 90%;
+}
+
+::placeholder {
+    color: #c4c4c4;
+    opacity: 1;
+    /* Firefox */
+}
+
+:-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: #c4c4c4;
+}
+
+::-ms-input-placeholder {
+    /* Microsoft Edge */
+    color: #c4c4c4;
+}
+
+Select {
+    background-color: #9a3aee;
+    color: white;
+    font-size: 16px;
+    font-weight: 400;
+    width: 92%!important;
+    margin-top: 25px;
+}
+
+input[type=button] {
+    background-color: #9a3aee;
+    color: white;
+    font-size: 16px;
+    font-weight: 400;
+    width: 45%;
+    margin-top: 25px;
+}
+
+.left {
+    float: left;
+    width: 400px;
+    height: auto;
+    overflow: hidden;
+}
+
+.clearfix {
+    overflow: auto;
+    margin-bottom: 100px;
+}
+
+.img1 {
+    float: left;
+    padding-right: 15px;
+    padding-bottom: 15px;
+}
+
+.right {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.myconsole {
+    border: 2px solid white;
+    height: 90vh;
+    overflow-y: scroll;
+    transform: rotateX(180deg);
+    font-size: 12pt;
+}
+
+.list {
+    list-style-type: none;
+    padding-left: 0;
+    transform: rotateX(180deg);
+}
+
+#matchInfo {}
+
+#matchType {
+    float: left;
+    border: 2px solid white;
+    width: 150px;
+    overflow: hidden;
+}
+
+#countDown {
+    margin-left: 200px;
+    /*  border:2px solid;*/
+    font-size: 68px;
+    height: 100px;
+    line-height: 100px;
+}
