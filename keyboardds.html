@@ -329,10 +329,10 @@ function disconnectElegoo() {
 connectButton.onclick = function() {
 	if( tmr == -1 ) {
 		var ctrlr = document.getElementById('controllerSelect');
-		if (ctrlr.value == 0 ) {
+		/*if (ctrlr.value == 0 ) {
 			alert( "You must select a game controller");
 			return;
-		}
+		}*/
 
 		if( storageAvailable('localStorage')) {
 			localStorage.setItem('elegooHost', elegooHost.value );
