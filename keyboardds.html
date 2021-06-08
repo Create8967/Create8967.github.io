@@ -64,6 +64,8 @@ var countDown = document.getElementById('countDown');
 var list = document.getElementById('list');
 var disconnectPending = false;
 
+	
+
 function appendToConsole( s ) {
 	var item = document.createElement('li');
 	item.innerHTML = s;
@@ -190,17 +192,7 @@ function mapButtons( gp ) {
 	return 0;
 }
 
-//My code - Aidan Fisher
 
-
-let keyPresses = {}; // array for multiple key presses
-window.addEventListener('keydown',(dakey) => { 
-	keyPresses[dakey.key] = true; //Add key to array
-}
-
-window.addEventListener('keyup',(dakey) => { 
-	delete this.keyPresses[dakey.key]; //Remove key from array
-}
 function packGameData( gp, mode ) {
 	let packet = new ArrayBuffer(16);
 	let view = new DataView( packet );
@@ -211,7 +203,7 @@ function packGameData( gp, mode ) {
 	view.setUint8(  1, 0x01 );	// Version
 	view.setUint8(  2, 0x10 );  // size = 16
 	view.setUint8(  3, mode );
-	if( mode != 2 ) {	 // zero everything if not teleop
+	if( mode != 2 || mode != 96) {	 // zero everything if not teleop
 		view.setUint16( 4, 0, true );
 		view.setUint8(  6, 0 );  // L Trigger 0 - 255
 		view.setUint8(  7, 0 );  // R Trigger 0 - 255
@@ -220,7 +212,17 @@ function packGameData( gp, mode ) {
 		view.setInt8(  10, 0 ); // RX
 		view.setInt8(  11, 0 ); // RY
 	}
-	else {
+	if(mode == 96) {
+		let btns = mapButtonsWin( gp );
+		view.setUint16( 4, 0, true );
+		view.setUint8(  6, keyPresses['s'] ? 255 : 0);  // L Trigger 0 - 255
+		view.setUint8(  7, keyPresses['w'] ? 255 : 0);
+		view.setInt8(   8, 0 ); // LX
+		view.setInt8(   9,0 ); // LY
+		view.setInt8(  10, 0 ); // RX
+		view.setInt8(  11,0 ); // RY
+	}
+	/*else {
 		if( theOS == "Windows" || theOS == "Chrome" ) {
 			let btns = mapButtonsWin( gp );
 			view.setUint16( 4, btns, true );
@@ -245,7 +247,7 @@ function packGameData( gp, mode ) {
 		else {
 			console.log( "Invalid OS" );
 		}
-	}
+	}*/
 	view.setUint8( 12, 0x00 );  // User 1
 	view.setUint8( 13, 0x00 );  // User 2
 	
@@ -296,7 +298,7 @@ window.addEventListener("gamepadconnected", function(e) {
 startButton.onclick = function() {
 	if( gameState.isIdle() ) {
 		const rbs = document.querySelectorAll('input[name="gameMode"]');
-		let mode = 'none';
+		let mode = 1;
 		for( const rb of rbs ) {
 			if( rb.checked ) {
 				mode = rb.value;
