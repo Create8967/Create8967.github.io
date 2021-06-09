@@ -1,0 +1,431 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="wwfirst-style.css">
+</head>
+<body>
+<div id="wrapper">
+  <div class="left">
+	<div class="clearfix">
+		<img class="img1" src="wwfro-512x512.png" width="150" height="150">
+			<h3>WWFIRST 2021 Elegoo Competition</h3>
+		<div>
+			DiverStation Ver 1.1.1
+		</div>
+		<div id="thedate">
+		</div>
+	</div>
+	<div>
+      <label for="elegooHost">Elegoo Host Name:</label>
+      <input type="text" id="elegooHost" name="elegooHost" placeholder="Tcp2Elegoo.local">
+	</div>
+    <div>
+	  <select id="controllerSelect" style="width:350px;">
+	    <option value="0" id="clicky">Click a button on XBox Controller</option>
+	  </select>
+	</div>
+	<br>
+	<div id="matchInfo">
+		<div id="matchType" >
+			Match Type
+			<div>
+			  <input type="radio" id="Autonomous" name="gameMode" value="auto">
+			  <label for="Autonomous">Autonomous</label>
+			</div>
+			<div>
+			  <input type="radio" id="Teleop" name="gameMode" value="teleop" checked>
+			  <label for="Teleop">Teleop</label>
+			</div>
+			<div>
+			  <input type="radio" id="FullGame" name="gameMode" value="full">
+			  <label for="FullGame">Full Game</label>
+			</div>
+		</div>
+		<div id="countDown">
+			00
+		</div>
+	</div>
+	<br>
+	<input id="connect" type="button" class="button" value="Connect">
+	<input id="startGame" type="button" class="button" value="Start" disabled>
+  </div>
+  <div class="right">Console Output
+    <div class="myconsole">
+      <ul id="list" class="list">
+      	<li>---> Idle <---</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="gamestate.js"></script>
+<script>
+var connectButton = document.getElementById('connect');
+var startButton = document.getElementById('startGame');
+var elegooHost = document.getElementById('elegooHost');
+var gameType = document.getElementById('gameMode');
+var countDown = document.getElementById('countDown');
+var datefield = document.getElementById('thedate');
+var list = document.getElementById('list');
+var disconnectPending = false;
+
+function appendToConsole( s ) {
+	var item = list.lastElementChild;
+	item.innerHTML = s;
+	var newitem = document.createElement('li');
+	list.appendChild(newitem);
+}
+
+class ConsoleLog {
+	constructor() {
+		var dt = new Date();
+		datefield.innerHTML = 'Date: ' + dt.toLocaleDateString();
+		this.buffer = "";
+	}
+	addData( data ) {
+		var dt = new Date();
+		datefield.innerHTML = 'Date: ' + dt.toLocaleDateString();
+		this.buffer += data;
+		let i = 0;
+		while( i < this.buffer.length ) {
+			if( this.buffer[i] == '\n' || this.buffer[i] == '\r' ) {
+				if( i != 0 ) {
+					let line = this.buffer.slice( 0, i );
+					appendToConsole( line );
+				}
+				this.buffer = this.buffer.slice( i + 1 );
+				i = 0;
+			}
+			else
+				i++;
+		}
+		list.lastElementChild.innerHTML = this.buffer;
+	}
+};
+
+var gameState = new GameState();
+var consoleLog = new ConsoleLog();
+var tmr = -1;
+var mySocket;
+
+var curPad = -1;
+
+const buttonMapWin = [
+					0x0001,		//  0 A
+				  0x0002,		//  1 B
+				  0x0004,		//  2 X 
+				  0x0008,		//  3 Y 
+				  0x0010,		//  4 Left Shoulder
+				  0x0020,		//  5 Right Shoulder
+				  0x0040,		//  6 Left Trigger
+				  0x0080,		//  7 Right Trigger
+				  0x0100,		//  8 Back
+				  0x0200,		//  9 Start
+				  0x0400,		// 10 Left Thumb
+				  0x0800,		// 11 Right Thumb
+				  0x1000,		// 12 DPAD Up
+				  0x2000,		// 13 DPAD Down
+				  0x4000,		// 14 DPAD Left
+				  0x8000,		// 15 DPAD Right
+				  0x0000		// 16 DPAD Centre (not supported)
+	];
+const buttonMapLinux = [
+					0x0001,	//  0 A
+					0x0002, //  1 B
+					0x0004, //  2 X
+					0x0008, //  3 Y
+					0x0010, //  4 Left Shoulder
+					0x0020, //  5 Right Shoulder
+					0x0100, //  6 Back
+					0x0200, //  7 Start
+					0x0000, //  8 Xbox
+					0x0400, //  9 Left Thumb
+					0x0800 // 10 Right Thumb
+  ];
+
+function mapButtonsWin( gp ) {
+	let btns = 0;
+	
+	for( var i = 0; i < gp.buttons.length; i++ ) {
+		const b = gp.buttons[i];
+		if( typeof(b) == "object" )
+			btns += b.pressed ? buttonMapWin[i] : 0;
+		else
+			btns += b ? buttonMapWin[i] : 0;
+	}
+	return btns;
+}
+
+function mapButtonsLinux( gp ) {
+	let btns = 0;
+	
+	for( var i = 0; i < gp.buttons.length; i++ ) {
+		const b = gp.buttons[i];
+		if( typeof(b) == "object" )
+			btns += b.pressed ? buttonMapLinux[i] : 0;
+		else
+			btns += b ? buttonMapLinux[i] : 0;
+	}
+	if( gp.axes[2] > 0 ) btns += 0x0040;
+	if( gp.axes[5] > 0 ) btns += 0x0080;
+	if( gp.axes[6] > 0 ) btns += 0x8000;
+	if( gp.axes[6] < 0 ) btns += 0x4000;
+	if( gp.axes[7] > 0 ) btns += 0x2000;
+	if( gp.axes[7] < 0 ) btns += 0x1000;
+
+	return btns;
+}
+
+function getOS() {
+  var OSName="Unknown OS";
+
+  if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
+  if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
+  if (navigator.appVersion.indexOf("X11")!=-1) OSName="UNIX";
+  if (navigator.appVersion.indexOf("Linux")!=-1) OSName="Linux";
+  if (navigator.appVersion.indexOf("CrOS")!=-1) OSName="Chrome";
+
+  return OSName;
+}
+
+var theOS = getOS();
+
+function mapButtons( gp ) {
+	if( theOS == "Windows" )
+		return mapButtonsWin( gp );
+	if( theOS == "Linux" )
+		return mapButtonsLinux( gp );
+	if( theOS == "Chrome" )
+		return mapButtonsWindows( gp );
+	if( theOS == "MacOS" )
+		return mapButtonsWindows( gp );
+
+	return 0;
+}
+
+function packGameData( gp, mode ) {
+	let packet = new ArrayBuffer(16);
+	let view = new DataView( packet );
+	
+//	let btns = mapButtons( gp );
+	
+	view.setUint8(  0, 0xA5 );	// Preamble
+	view.setUint8(  1, 0x01 );	// Version
+	view.setUint8(  2, 0x10 );  // size = 16
+	view.setUint8(  3, mode );
+	if( mode != 2 ) {	 // zero everything if not teleop
+		view.setUint16( 4, 0, true );
+		view.setUint8(  6, 0 );  // L Trigger 0 - 255
+		view.setUint8(  7, 0 );  // R Trigger 0 - 255
+		view.setInt8(   8, 0 ); // LX
+		view.setInt8(   9, 0 ); // LY
+		view.setInt8(  10, 0 ); // RX
+		view.setInt8(  11, 0 ); // RY
+	}
+	else {
+		if( theOS == "Windows" || theOS == "Chrome" || theOS == "MacOS" ) {
+			let btns = mapButtonsWin( gp );
+			view.setUint16( 4, btns, true );
+			view.setUint8(  6, Math.floor(gp.buttons[6].value * 255) );  // L Trigger 0 - 255
+			view.setUint8(  7, Math.floor(gp.buttons[7].value * 255) );  // R Trigger 0 - 255
+			view.setInt8(   8, Math.floor(gp.axes[0] * 127) ); // LX
+			view.setInt8(   9, Math.floor(gp.axes[1] * -127) ); // LY
+			view.setInt8(  10, Math.floor(gp.axes[2] * 127) ); // RX
+			view.setInt8(  11, Math.floor(gp.axes[3] * -127) ); // RY
+		}
+		else if( theOS == "Linux" ) {
+			let btns = mapButtonsLinux( gp );
+			view.setUint16( 4, btns, true );
+			view.setUint8(  6, Math.floor((gp.axes[2] + 1) * 255 / 2) );  // L Trigger 0 - 255
+			view.setUint8(  7, Math.floor((gp.axes[5] + 1) * 255 / 2) );  // R Trigger 0 - 255
+			view.setInt8(   8, Math.floor(gp.axes[0] * 127) ); // LX
+			view.setInt8(   9, Math.floor(gp.axes[1] * -127) ); // LY
+			view.setInt8(  10, Math.floor(gp.axes[3] * 127) ); // RX
+			view.setInt8(  11, Math.floor(gp.axes[4] * -127) ); // RY
+		}
+		else {
+			console.log( "Invalid OS" );
+		}
+	}
+	view.setUint8( 12, 0x00 );  // User 1
+	view.setUint8( 13, 0x00 );  // User 2
+	
+	let sum = 0;
+	for( var i = 0; i < 14; i++ ) {
+		sum += view.getUint8( i );
+	}
+	
+	view.setUint16( 14, sum, true ); // sum
+	
+	return packet;
+}
+
+function myTimer() {
+	gameState.update();
+	rem = Math.floor(gameState.getTimeRemaining() + .9);
+	if( rem == 0 )
+		countDown.innerHTML = '--';
+	else
+		countDown.innerHTML = rem;
+
+	var gp = navigator.getGamepads()[curPad];
+	
+	var pkt = packGameData( gp, gameState.getElegoMode() );
+	
+	mySocket.send( pkt );
+	if( disconnectPending && gameState.isIdle() ) {
+		disconnectElegoo();
+	}
+
+}
+
+window.addEventListener("gamepadconnected", function(e) {
+	var gp = navigator.getGamepads()[e.gamepad.index];
+	pad = e.gamepad.index;
+
+	var sel = document.getElementById('controllerSelect');
+	var item = document.createElement('option');
+	item.innerHTML = gp.id;
+	item.value = gp.index + 1;
+	sel.appendChild( item );
+	if( sel.length == 2 ) {
+		sel.value = 1;
+	}
+});
+
+
+startButton.onclick = function() {
+	if( gameState.isIdle() ) {
+		const rbs = document.querySelectorAll('input[name="gameMode"]');
+		let mode = 'none';
+		for( const rb of rbs ) {
+			if( rb.checked ) {
+				mode = rb.value;
+			}
+		}
+		if( mode != 'none' ) {
+			startButton.value = "Stop";
+			gameState.startGame( mode );
+		}
+	}
+	else
+		gameState.stopGame();
+}
+
+function isprint(char) {
+     return !( /[\x00-\x08\x0E-\x1F\x80-\xFF]/.test(char));
+}
+
+function disconnectElegoo() {
+	disconnectPending = false;
+	mySocket.close();
+	connectButton.value = "Connect";
+	startButton.disabled = true;
+	clearInterval( tmr );
+	tmr = -1;
+}
+
+connectButton.onclick = function() {
+	if( tmr == -1 ) {
+		var ctrlr = document.getElementById('controllerSelect');
+		if (ctrlr.value == 0 ) {
+			alert( "You must select a game controller");
+			return;
+		}
+
+		if( storageAvailable('localStorage')) {
+			localStorage.setItem('elegooHost', elegooHost.value );
+		}
+
+		try {
+			mySocket = new WebSocket( "wss://" + elegooHost.value + ":444/elegoo" );
+			mySocket.binaryType = 'arraybuffer';
+			mySocket.onerror = function(evt) {
+				alert( "Could not connect to " + elegooHost.value + "\n\nPossible causes are:\nIncorrect Host Name\nElegoo Not turned on\nElegoo not connected to Wifi\nInvalid Certificate");
+			};
+			mySocket.onopen = function(evt) {
+				curPad = ctrlr.value - 1;
+				connectButton.value = "Disconnect";
+				startButton.disabled = false;
+				
+				tmr = setInterval( myTimer, 100 );
+				mySocket.send( "ver:" );
+			}
+			mySocket.onmessage = function( evt ) {
+				if( evt.data instanceof ArrayBuffer ) {
+					let arr = new DataView( evt.data );
+					let l = evt.data.byteLength;
+					let s = "";
+					for( var i = 0; i < l; i++ ) {
+						let c = arr.getUint8(i);
+						if( isprint( c ) )
+							s += String.fromCharCode(c);
+					}
+					consoleLog.addData( s );
+				}
+				else {
+					consoleLog.addData( evt.data );
+				}
+//				appendToConsole( evt.data );
+			}
+			mySocket.onclose = function( evt ) {
+				disconnectElegoo();
+			}
+		}
+		catch(err) {
+			console.log(err);
+		}
+	}
+	else {
+		if( gameState.isIdle() ) {
+			disconnectElegoo();
+		}
+		else {
+			gameState.stopGame();
+			disconnectPending = true;
+		}
+			
+	}
+};
+
+function storageAvailable(type) {
+    var storage;
+    try {
+        storage = window[type];
+        var x = '__storage_test__';
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
+    }
+    catch(e) {
+        return e instanceof DOMException && (
+            // everything except Firefox
+            e.code === 22 ||
+            // Firefox
+            e.code === 1014 ||
+            // test name field too, because code might not be present
+            // everything except Firefox
+            e.name === 'QuotaExceededError' ||
+            // Firefox
+            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            (storage && storage.length !== 0);
+    }
+}
+
+if (storageAvailable('localStorage')) {
+	elegooHost.value = localStorage.getItem('elegooHost');
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+//    console.log('ServiceWorker registration successful with scope:',  registration.scope);
+  }).catch(function(error) {
+//    console.log('ServiceWorker registration failed:', error);
+  });
+}
+</script>
+</body>
+</html>
