@@ -204,7 +204,17 @@ function mapButtons( gp ) {
 
 	return 0;
 }
+//My code - Aidan Fisher
 
+
+let keyPresses = {}; // array for multiple key presses
+window.addEventListener('keydown',(dakey) => { 
+	keyPresses[dakey.key] = true; //Add key to array
+});
+
+window.addEventListener('keyup',(dakey) => { 
+	delete this.keyPresses[dakey.key]; //Remove key from array
+});
 function packGameData( gp, mode ) {
 	let packet = new ArrayBuffer(16);
 	let view = new DataView( packet );
@@ -233,7 +243,7 @@ function packGameData( gp, mode ) {
 			view.setInt8(   8, Math.floor(gp.axes[0] * 127) ); // LX
 			view.setInt8(   9, Math.floor(gp.axes[1] * -127) ); // LY
 			view.setInt8(  10, Math.floor(gp.axes[2] * 127) ); // RX
-			view.setInt8(  11, Math.floor(gp.axes[3] * -127) ); // RY
+			view.setInt8(  11, keyPresses['w'] ? 255 : 0 ); // RY
 		}
 		else if( theOS == "Linux" ) {
 			let btns = mapButtonsLinux( gp );
