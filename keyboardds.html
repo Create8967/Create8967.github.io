@@ -360,7 +360,7 @@ connectButton.onclick = function() {
 				curPad = ctrlr.value - 1;
 				connectButton.value = "Disconnect";
 				startButton.disabled = false;
-				
+				alert("Connected");
 				tmr = setInterval( myTimer, 100 );
 			}
 			mySocket.onmessage = function( evt ) {
