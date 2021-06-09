@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="wwfirst-style.css">
 </head>
 <body>
@@ -10,7 +11,7 @@
 		<img class="img1" src="wwfro-512x512.png" width="150" height="150">
 			<h3>WWFIRST 2021 Elegoo Competition</h3>
 		<div>
-			DiverStation Ver 1.1.1 | Code beta v1
+			Keyboard DiverStation Ver 1.1.1
 		</div>
 		<div id="thedate">
 		</div>
@@ -18,11 +19,6 @@
 	<div>
       <label for="elegooHost">Elegoo Host Name:</label>
       <input type="text" id="elegooHost" name="elegooHost" placeholder="Tcp2Elegoo.local">
-	</div>
-    <div>
-	  <select id="controllerSelect" style="width:350px;">
-	    <option value="0" id="clicky">Click a button on XBox Controller</option>
-	  </select>
 	</div>
 	<br>
 	<div id="matchInfo">
@@ -65,21 +61,26 @@ var startButton = document.getElementById('startGame');
 var elegooHost = document.getElementById('elegooHost');
 var gameType = document.getElementById('gameMode');
 var countDown = document.getElementById('countDown');
-
+var datefield = document.getElementById('thedate');
 var list = document.getElementById('list');
 var disconnectPending = false;
 
 function appendToConsole( s ) {
-	var item = document.createElement('li');
+	var item = list.lastElementChild;
 	item.innerHTML = s;
-	list.appendChild(item);
+	var newitem = document.createElement('li');
+	list.appendChild(newitem);
 }
 
 class ConsoleLog {
 	constructor() {
+		var dt = new Date();
+		datefield.innerHTML = 'Date: ' + dt.toLocaleDateString();
 		this.buffer = "";
 	}
 	addData( data ) {
+		var dt = new Date();
+		datefield.innerHTML = 'Date: ' + dt.toLocaleDateString();
 		this.buffer += data;
 		let i = 0;
 		while( i < this.buffer.length ) {
@@ -94,6 +95,7 @@ class ConsoleLog {
 			else
 				i++;
 		}
+		list.lastElementChild.innerHTML = this.buffer;
 	}
 };
 
@@ -104,71 +106,7 @@ var mySocket;
 
 var curPad = -1;
 
-const buttonMapWin = [
-					0x0001,		//  0 A
-				  0x0002,		//  1 B
-				  0x0004,		//  2 X 
-				  0x0008,		//  3 Y 
-				  0x0010,		//  4 Left Shoulder
-				  0x0020,		//  5 Right Shoulder
-				  0x0040,		//  6 Left Trigger
-				  0x0080,		//  7 Right Trigger
-				  0x0100,		//  8 Back
-				  0x0200,		//  9 Start
-				  0x0400,		// 10 Left Thumb
-				  0x0800,		// 11 Right Thumb
-				  0x1000,		// 12 DPAD Up
-				  0x2000,		// 13 DPAD Down
-				  0x4000,		// 14 DPAD Left
-				  0x8000,		// 15 DPAD Right
-				  0x0000		// 16 DPAD Centre (not supported)
-	];
-const buttonMapLinux = [
-					0x0001,	//  0 A
-					0x0002, //  1 B
-					0x0004, //  2 X
-					0x0008, //  3 Y
-					0x0010, //  4 Left Shoulder
-					0x0020, //  5 Right Shoulder
-					0x0100, //  6 Back
-					0x0200, //  7 Start
-					0x0000, //  8 Xbox
-					0x0400, //  9 Left Thumb
-					0x0800 // 10 Right Thumb
-  ];
 
-function mapButtonsWin( gp ) {
-	let btns = 0;
-	
-	for( var i = 0; i < gp.buttons.length; i++ ) {
-		const b = gp.buttons[i];
-		if( typeof(b) == "object" )
-			btns += b.pressed ? buttonMapWin[i] : 0;
-		else
-			btns += b ? buttonMapWin[i] : 0;
-	}
-	return btns;
-}
-
-function mapButtonsLinux( gp ) {
-	let btns = 0;
-	
-	for( var i = 0; i < gp.buttons.length; i++ ) {
-		const b = gp.buttons[i];
-		if( typeof(b) == "object" )
-			btns += b.pressed ? buttonMapLinux[i] : 0;
-		else
-			btns += b ? buttonMapLinux[i] : 0;
-	}
-	if( gp.axes[2] > 0 ) btns += 0x0040;
-	if( gp.axes[5] > 0 ) btns += 0x0080;
-	if( gp.axes[6] > 0 ) btns += 0x8000;
-	if( gp.axes[6] < 0 ) btns += 0x4000;
-	if( gp.axes[7] > 0 ) btns += 0x2000;
-	if( gp.axes[7] < 0 ) btns += 0x1000;
-
-	return btns;
-}
 
 function getOS() {
   var OSName="Unknown OS";
@@ -184,17 +122,6 @@ function getOS() {
 
 var theOS = getOS();
 
-function mapButtons( gp ) {
-	if( theOS == "Windows" )
-		return mapButtonsWin( gp );
-	if( theOS == "Linux" )
-		return mapButtonsLinux( gp );
-	if( theOS == "Chrome" )
-		return mapButtonsWindows( gp );
-
-	return 0;
-}
-
 //My code - Aidan Fisher
 
 
@@ -204,9 +131,9 @@ window.addEventListener('keydown',(dakey) => {
 });
 
 window.addEventListener('keyup',(dakey) => { 
-	delete this.keyPresses[dakey.key]; //Remove key from array
+	keyPresses[dakey.key] = false; //Remove key from array
 });
-function packGameData( gp, mode ) {
+function packGameData( mode ) {
 	let packet = new ArrayBuffer(16);
 	let view = new DataView( packet );
 	
@@ -226,40 +153,29 @@ function packGameData( gp, mode ) {
 		view.setInt8(  11, 0 ); // RY
 	}
 	else {
+		//if( theOS == "Windows" || theOS == "Chrome" || theOS == "MacOS" ) {
+		let btns = mapButtonsWin( gp );
 		view.setUint16( 4, 0, true );
-		view.setUint8(  6,keyPresses['s'] ? 255 : 0); // L Trigger 0 - 255
-		//view.setUint8(  7, Math.floor(gp.buttons[7].value * 255) );  // R Trigger 0 - 255
-		view.setUint8(  7, keyPresses['w'] ? 255 : 0);
-		view.setInt8(   8, 0 ); // LX
+		view.setUint8(  6, 0);  // L Trigger 0 - 255
+		view.setUint8(  7, keyPresses['w'] ? 100 : 0 );  // R Trigger 0 - 255
+		view.setInt8(   8, 0 );
+		if(keyPresses['ArrowRight'] === true)
+			view.setInt8(  8, -120); // RY
+		else if(keyPresses['ArrowLeft'] === true)
+			view.setInt8(  8,120  ); // RY
 		view.setInt8(   9, 0 ); // LY
-		view.setInt8(  10, 0 ); // RX
-		view.setInt8(  11, 0 ); // RY
-	/*
-		if( theOS == "Windows" || theOS == "Chrome" ) {
-			let btns = mapButtonsWin( gp );
-			view.setUint16( 4, btns, true );
-			view.setUint8(  6, Math.floor(gp.buttons[6].value * 255) );  // L Trigger 0 - 255
-			//view.setUint8(  7, Math.floor(gp.buttons[7].value * 255) );  // R Trigger 0 - 255
-			view.setUint8(  7, keyPresses['w'] ? 255 : 0);
-			view.setInt8(   8, Math.floor(gp.axes[0] * 127) ); // LX
-			view.setInt8(   9, Math.floor(gp.axes[1] * -127) ); // LY
-			view.setInt8(  10, Math.floor(gp.axes[2] * 127) ); // RX
-			view.setInt8(  11, Math.floor(gp.axes[3] * -127) ); // RY
-		}
-		else if( theOS == "Linux" ) {
-			let btns = mapButtonsLinux( gp );
-			view.setUint16( 4, btns, true );
-			view.setUint8(  6, Math.floor((gp.axes[2] + 1) * 255 / 2) );  // L Trigger 0 - 255
-			view.setUint8(  7, Math.floor((gp.axes[5] + 1) * 255 / 2) );  // R Trigger 0 - 255
-			view.setInt8(   8, Math.floor(gp.axes[0] * 127) ); // LX
-			view.setInt8(   9, Math.floor(gp.axes[1] * -127) ); // LY
-			view.setInt8(  10, Math.floor(gp.axes[3] * 127) ); // RX
-			view.setInt8(  11, Math.floor(gp.axes[4] * -127) ); // RY
-		}
-		else {
-			console.log( "Invalid OS" );
-		}
-	}*/
+		view.setInt8(  10, 0); // RY
+		if(keyPresses['d'] === true)
+			view.setInt8(  10, 120); // RY
+		else if(keyPresses['a'] === true)
+			view.setInt8(  10,-120  ); // RY
+		view.setInt8(  11, 0); // RY
+		if(keyPresses['w'] === true)
+				view.setInt8(  11, 120); // RY
+		else if(keyPresses['s'] === true)
+			view.setInt8(  11,-120  ); // RY
+		//}
+	}
 	view.setUint8( 12, 0x00 );  // User 1
 	view.setUint8( 13, 0x00 );  // User 2
 	
@@ -281,9 +197,9 @@ function myTimer() {
 	else
 		countDown.innerHTML = rem;
 
-	var gp = navigator.getGamepads()[curPad];
+	//var gp = navigator.getGamepads()[curPad]; nah
 	
-	var pkt = packGameData( gp, gameState.getElegoMode() );
+	var pkt = packGameData( gameState.getElegoMode() );
 	
 	mySocket.send( pkt );
 	if( disconnectPending && gameState.isIdle() ) {
@@ -291,7 +207,7 @@ function myTimer() {
 	}
 
 }
-
+/*
 window.addEventListener("gamepadconnected", function(e) {
 	var gp = navigator.getGamepads()[e.gamepad.index];
 	pad = e.gamepad.index;
@@ -304,7 +220,7 @@ window.addEventListener("gamepadconnected", function(e) {
 	if( sel.length == 2 ) {
 		sel.value = 1;
 	}
-});
+});*/
 
 
 startButton.onclick = function() {
@@ -340,11 +256,11 @@ function disconnectElegoo() {
 
 connectButton.onclick = function() {
 	if( tmr == -1 ) {
-		var ctrlr = document.getElementById('controllerSelect');/*
-		if (ctrlr.value == 0 ) {
+		var ctrlr = document.getElementById('controllerSelect');
+		/*if (ctrlr.value == 0 ) {
 			alert( "You must select a game controller");
 			return;
-		} */ //fuck off - respectfully
+		}*/ //no.
 
 		if( storageAvailable('localStorage')) {
 			localStorage.setItem('elegooHost', elegooHost.value );
@@ -357,11 +273,12 @@ connectButton.onclick = function() {
 				alert( "Could not connect to " + elegooHost.value + "\n\nPossible causes are:\nIncorrect Host Name\nElegoo Not turned on\nElegoo not connected to Wifi\nInvalid Certificate");
 			};
 			mySocket.onopen = function(evt) {
-				curPad = 0;
+				//curPad = ctrlr.value - 0;
 				connectButton.value = "Disconnect";
 				startButton.disabled = false;
-				alert("Connected");
+				
 				tmr = setInterval( myTimer, 100 );
+				mySocket.send( "ver:" );
 			}
 			mySocket.onmessage = function( evt ) {
 				if( evt.data instanceof ArrayBuffer ) {
@@ -437,5 +354,5 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-    </body>
-	</html>
+</body>
+</html>
