@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<!-- saved from url=(0029)https://elegoo.wwfirst.ca/ds/ -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-
+<html>
+<head>
+<link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="wwfirst-style.css">
 </head>
 <body>
 <div id="wrapper">
   <div class="left">
 	<div class="clearfix">
-    <img class="img1" src="./elegoo.wwfirst.ca_files/wwfro-512x512.png" width="150" height="150">
-		<h3>WWFIRST 2021 Elegoo Competition</h3>
+		<img class="img1" src="wwfro-512x512.png" width="150" height="150">
+			<h3>WWFIRST 2021 Elegoo Competition</h3>
+		<div>
+			DiverStation Ver 1.1.1
+		</div>
+		<div id="thedate">
+		</div>
 	</div>
 	<div>
       <label for="elegooHost">Elegoo Host Name:</label>
@@ -22,14 +27,14 @@
 	</div>
 	<br>
 	<div id="matchInfo">
-		<div id="matchType">
+		<div id="matchType" >
 			Match Type
 			<div>
 			  <input type="radio" id="Autonomous" name="gameMode" value="auto">
 			  <label for="Autonomous">Autonomous</label>
 			</div>
 			<div>
-			  <input type="radio" id="Teleop" name="gameMode" value="teleop" checked="">
+			  <input type="radio" id="Teleop" name="gameMode" value="teleop" checked>
 			  <label for="Teleop">Teleop</label>
 			</div>
 			<div>
@@ -43,14 +48,15 @@
 	</div>
 	<br>
 	<input id="connect" type="button" class="button" value="Connect">
-	<input id="startGame" type="button" class="button" value="Start" disabled="">
+	<input id="startGame" type="button" class="button" value="Start" disabled>
   </div>
   <div class="right">Console Output
     <div class="myconsole">
       <ul id="list" class="list">
-      <li>---&gt; Idle &lt;---</li></ul>
+      	<li>---> Idle <---</li>
+      </ul>
     </div>
-  <div>
+  </div>
 </div>
 
 <script type="text/javascript" src="gamestate.js"></script>
