@@ -357,7 +357,7 @@ connectButton.onclick = function() {
 				alert( "Could not connect to " + elegooHost.value + "\n\nPossible causes are:\nIncorrect Host Name\nElegoo Not turned on\nElegoo not connected to Wifi\nInvalid Certificate");
 			};
 			mySocket.onopen = function(evt) {
-				curPad = ctrlr.value - 1;
+				curPad = 0;
 				connectButton.value = "Disconnect";
 				startButton.disabled = false;
 				alert("Connected");
