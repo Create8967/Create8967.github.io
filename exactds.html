@@ -242,9 +242,9 @@ function packGameData( gp, mode ) {
 			view.setUint8(  7, keyPresses['w'] ? 100 : 0 );  // R Trigger 0 - 255
 			view.setInt8(   8, 0 );
 			if(keyPresses['ArrowRight'] === true)
-				view.setInt8(  8, 120); // RY
+				view.setInt8(  8, -120); // RY
 			else if(keyPresses['ArrowLeft'] === true)
-				view.setInt8(  8,-120  ); // RY
+				view.setInt8(  8,120  ); // RY
 			view.setInt8(   9, Math.floor(gp.axes[1] * -127) ); // LY
 			view.setInt8(  10, 0); // RY
 			if(keyPresses['d'] === true)
@@ -352,10 +352,10 @@ function disconnectElegoo() {
 connectButton.onclick = function() {
 	if( tmr == -1 ) {
 		var ctrlr = document.getElementById('controllerSelect');
-		if (ctrlr.value == 0 ) {
+		/*if (ctrlr.value == 0 ) {
 			alert( "You must select a game controller");
 			return;
-		}
+		}*/ //no.
 
 		if( storageAvailable('localStorage')) {
 			localStorage.setItem('elegooHost', elegooHost.value );
@@ -368,7 +368,7 @@ connectButton.onclick = function() {
 				alert( "Could not connect to " + elegooHost.value + "\n\nPossible causes are:\nIncorrect Host Name\nElegoo Not turned on\nElegoo not connected to Wifi\nInvalid Certificate");
 			};
 			mySocket.onopen = function(evt) {
-				curPad = ctrlr.value - 1;
+				curPad = ctrlr.value - 0;
 				connectButton.value = "Disconnect";
 				startButton.disabled = false;
 				
