@@ -242,8 +242,16 @@ function packGameData( gp, mode ) {
 			view.setUint8(  7, keyPresses['w'] ? 100 : 0 );  // R Trigger 0 - 255
 			view.setInt8(   8, Math.floor(gp.axes[0] * 127) ); // LX
 			view.setInt8(   9, Math.floor(gp.axes[1] * -127) ); // LY
-			view.setInt8(  10, Math.floor(gp.axes[2] * 127) ); // RX
-			view.setInt8(  11, keyPresses['w'] ? 100 : 0 ); // RY
+			view.setInt8(  10, 0); // RY
+			if(keyPresses['d'] === true)
+				view.setInt8(  11, 120); // RY
+			else if(keyPresses['a'] === true)
+				view.setInt8(  11,-120  ); // RY
+			view.setInt8(  11, 0); // RY
+			if(keyPresses['w'] === true)
+				view.setInt8(  11, 120); // RY
+			else if(keyPresses['s'] === true)
+				view.setInt8(  11,-120  ); // RY
 		}
 		else if( theOS == "Linux" ) {
 			let btns = mapButtonsLinux( gp );
