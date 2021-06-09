@@ -154,7 +154,7 @@ function packGameData( mode ) {
 	}
 	else {
 		//if( theOS == "Windows" || theOS == "Chrome" || theOS == "MacOS" ) {
-		let btns = mapButtonsWin( gp );
+		//let btns = mapButtonsWin( gp );
 		view.setUint16( 4, 0, true );
 		view.setUint8(  6, 0);  // L Trigger 0 - 255
 		view.setUint8(  7, keyPresses['w'] ? 100 : 0 );  // R Trigger 0 - 255
