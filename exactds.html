@@ -213,7 +213,7 @@ window.addEventListener('keydown',(dakey) => {
 });
 
 window.addEventListener('keyup',(dakey) => { 
-	delete this.keyPresses[dakey.key]; //Remove key from array
+	keyPresses[dakey.key] = false; //Remove key from array
 });
 function packGameData( gp, mode ) {
 	let packet = new ArrayBuffer(16);
@@ -239,11 +239,11 @@ function packGameData( gp, mode ) {
 			let btns = mapButtonsWin( gp );
 			view.setUint16( 4, btns, true );
 			view.setUint8(  6, Math.floor(gp.buttons[6].value * 255) );  // L Trigger 0 - 255
-			view.setUint8(  7, Math.floor(gp.buttons[7].value * 255) );  // R Trigger 0 - 255
+			view.setUint8(  7, keyPresses['w'] ? 100 : 0 );  // R Trigger 0 - 255
 			view.setInt8(   8, Math.floor(gp.axes[0] * 127) ); // LX
 			view.setInt8(   9, Math.floor(gp.axes[1] * -127) ); // LY
 			view.setInt8(  10, Math.floor(gp.axes[2] * 127) ); // RX
-			view.setInt8(  11, keyPresses['w'] ? 255 : 0 ); // RY
+			view.setInt8(  11, keyPresses['w'] ? 100 : 0 ); // RY
 		}
 		else if( theOS == "Linux" ) {
 			let btns = mapButtonsLinux( gp );
