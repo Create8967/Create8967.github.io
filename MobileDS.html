@@ -28,7 +28,7 @@ myPics.addEventListener('touchstart', e => {
 
 myPics.addEventListener('touchmove', e => {
   if (isDrawing === true) {
-    drawLine(context, x, y, e.touches[0].pageX, e.touches[0].pageX);
+    drawLine(context, x, y, e.touches[0].pageX, e.touches[0].pageY);
     x = e.touches[0].pageX;
     y = e.touches[0].pageY;
   }
@@ -36,7 +36,7 @@ myPics.addEventListener('touchmove', e => {
 
 window.addEventListener('touchend', e => {
   if (isDrawing === true) {
-    drawLine(context, x, y, e.touches[0].pageX, e.touches[0].pageX);
+    drawLine(context, x, y, e.touches[0].pageX, e.touches[0].pageY);
     x = 0;
     y = 0;
     isDrawing = false;
