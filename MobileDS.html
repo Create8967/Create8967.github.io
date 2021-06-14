@@ -32,6 +32,8 @@ window.addEventListener('touchmove', e => {
   touching = true;
   x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
   y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
+  dx = Math.floor(x*125);
+  dy = Math.floor(y*125);
   document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
 });
 
@@ -39,6 +41,8 @@ window.addEventListener('touchend', e => {
   touching = false;
   x = 0;
   y = 0;
+  dx = Math.floor(x*125);
+  dy = Math.floor(y*125);
   document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
 });
 </script>
