@@ -13,6 +13,8 @@ body {
 // When true, moving the mouse draws on the canvas
 let x = 0;
 let y = 0;
+let dx = 0;
+let dy = 0;
 let touching = false;
 // event.offsetX, event.offsetY gives the (x,y) offset from the edge of the canvas.
 
@@ -21,21 +23,23 @@ window.addEventListener('touchstart', e => {
   touching = true;
   x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
   y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
-  document.getElementById("pos").innerHTML = "X: " + x +", Y: " + y + ", Touching: " + touching;
+  dx = Math.floor(x*125);
+  dy = Math.floor(y*125);
+  document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
 });
 
 window.addEventListener('touchmove', e => {
   touching = true;
   x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
   y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
-  document.getElementById("pos").innerHTML = "X: " + x +", Y: " + y + ", Touching: " + touching;
+  document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
 });
 
 window.addEventListener('touchend', e => {
   touching = false;
   x = 0;
   y = 0;
-  document.getElementById("pos").innerHTML = "X: " + x +", Y: " + y + ", Touching: " + touching;
+  document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
 });
 </script>
 <html>
