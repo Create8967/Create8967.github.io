@@ -17,14 +17,14 @@ let y = 0;
 
 // Add the event listeners for mousedown, mousemove, and mouseup
 window.addEventListener('touchstart', e => {
-  x = e.touches[0].pageX;
-  y = e.touches[0].pageY;
+  x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
+  y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
   document.getElementById("pos").innerHTML = "X: " + x +", Y: " + y;
 });
 
 window.addEventListener('touchmove', e => {
-  x = e.touches[0].pageX;
-  y = e.touches[0].pageY;
+  x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
+  y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
   document.getElementById("pos").innerHTML = "X: " + x +", Y: " + y;
 });
 
