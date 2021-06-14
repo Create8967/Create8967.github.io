@@ -6,6 +6,7 @@ canvas {
 }
 </style>
 <h1>Draw stuff to test mouse down</h1>
+<p id="pos"></p>
 <canvas id="myPics" width=screen.width height=screen.height></canvas>
 <script>
 // When true, moving the mouse draws on the canvas
@@ -13,19 +14,21 @@ let isDrawing = false;
 let x = 0;
 let y = 0;
 
-const myPics = document.getElementById('myPics');
-const context = myPics.getContext('2d');
-
+const tArea = document.getElementById('myPics');
+const context = tArea.getContext('2d');
+tArea.width = window.innerWidth;
+tArea.height = window.innerHeight;
 // event.offsetX, event.offsetY gives the (x,y) offset from the edge of the canvas.
 
 // Add the event listeners for mousedown, mousemove, and mouseup
-myPics.addEventListener('touchstart', e => {
+window.addEventListener('touchstart', e => {
   x = e.touches[0].pageX;
   y = e.touches[0].pageY;
   isDrawing = true;
+  document.getElementById("pos").innerHTML = "X: " + x +", Y: " + y;
 });
 
-myPics.addEventListener('touchmove', e => {
+window.addEventListener('touchmove', e => {
   if (isDrawing === true) {
     drawLine(context, x, y, e.touches[0].pageX, e.touches[0].pageY);
     x = e.touches[0].pageX;
