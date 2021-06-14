@@ -20,23 +20,23 @@ const context = myPics.getContext('2d');
 // event.offsetX, event.offsetY gives the (x,y) offset from the edge of the canvas.
 
 // Add the event listeners for mousedown, mousemove, and mouseup
-myPics.addEventListener('mousedown', e => {
-  x = e.offsetX;
-  y = e.offsetY;
+myPics.addEventListener('touchstart', e => {
+  x = e.touches[0].pageX;
+  y = e.touches[0].pageY;
   isDrawing = true;
 });
 
-myPics.addEventListener('mousemove', e => {
+myPics.addEventListener('touchmove', e => {
   if (isDrawing === true) {
-    drawLine(context, x, y, e.offsetX, e.offsetY);
-    x = e.offsetX;
-    y = e.offsetY;
+    drawLine(context, x, y, e.touches[0].pageX, e.touches[0].pageX);
+    x = e.touches[0].pageX;
+    y = e.touches[0].pageY;
   }
 });
 
-window.addEventListener('mouseup', e => {
+window.addEventListener('touchend', e => {
   if (isDrawing === true) {
-    drawLine(context, x, y, e.offsetX, e.offsetY);
+    drawLine(context, x, y, e.touches[0].pageX, e.touches[0].pageX);
     x = 0;
     y = 0;
     isDrawing = false;
