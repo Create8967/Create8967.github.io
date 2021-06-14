@@ -21,6 +21,7 @@ const clamp = (n, min, max) => Math.min(Math.max(n, min), max); //Clamp function
 
 // Add the event listeners for mousedown, mousemove, and mouseup
 window.addEventListener('touchstart', e => {
+  e.preventDefault();
   touching = true;
   x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
   y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
@@ -30,6 +31,7 @@ window.addEventListener('touchstart', e => {
 });
 
 window.addEventListener('touchmove', e => {
+  e.preventDefault();
   touching = true;
   x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
   y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
