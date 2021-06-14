@@ -30,7 +30,7 @@ window.addEventListener('touchstart', e => {
   x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
   y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
   dx = clamp(Math.floor(x*127),-127,127);
-  dy = clamp(Math.floor(y*127),-127,127);
+  dy = clamp(Math.floor(y*127),-127,127) * -1; //invert
   document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
 });
 
@@ -39,7 +39,7 @@ window.addEventListener('touchmove', e => {
   x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
   y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
   dx = clamp(Math.floor(x*127),-127,127);
-  dy = clamp(Math.floor(y*127),-127,127);
+  dy = clamp(Math.floor(y*127),-127,127) * -1; //invert
   document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
 });
 
@@ -48,7 +48,7 @@ window.addEventListener('touchend', e => {
   x = 0;
   y = 0;
   dx = clamp(Math.floor(x*127),-127,127);
-  dy = clamp(Math.floor(y*127),-127,127);
+  dy = clamp(Math.floor(y*127),-127,127) * -1; //invert
   document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
 });
 </script>
