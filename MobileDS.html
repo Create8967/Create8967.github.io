@@ -34,6 +34,7 @@ window.addEventListener('touchmove', e => {
     x = e.touches[0].pageX;
     y = e.touches[0].pageY;
   }
+  document.getElementById("pos").innerHTML = "X: " + x +", Y: " + y;
 });
 
 window.addEventListener('touchend', e => {
