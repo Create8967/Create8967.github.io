@@ -51,7 +51,7 @@ body {
 </div>
 <input id="connect" type="button" class="button" value="Connect">
 <input id="startGame" type="button" class="button" value="Start" disabled>
-<div class="right">Console Output
+<div class="right" id="canhide2">Console Output
     <div class="myconsole">
       <ul id="list" class="list">
       	<li>---> Idle <---</li>
@@ -153,7 +153,7 @@ var mySocket;
 var curPad = -1;
 
 var hidden = document.getElementById("canhide");
-var hidden2 = document.getElementById("right");
+var hidden2 = document.getElementById("canhide2");
 
 function getOS() {
   var OSName="Unknown OS";
