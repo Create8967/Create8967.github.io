@@ -100,7 +100,7 @@ window.addEventListener('touchend', e => {
   dy = clamp(Math.floor(y*127),-127,127) * -1; //invert
   document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
 });
-/*
+
 function appendToConsole( s ) {
 	var item = list.lastElementChild;
 	item.innerHTML = s;
@@ -347,7 +347,7 @@ if ('serviceWorker' in navigator) {
   }).catch(function(error) {
 //    console.log('ServiceWorker registration failed:', error);
   });
-}*/
+}
 </script>
 </body>
 
