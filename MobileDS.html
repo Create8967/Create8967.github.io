@@ -109,6 +109,8 @@ window.addEventListener('touchend', e => {
   document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
 });
 
+document.getElementById("countDown").onselectstart = function () { return false; } //Make unselectable
+	
 function appendToConsole( s ) {
 	var item = list.lastElementChild;
 	item.innerHTML = s;
@@ -151,6 +153,7 @@ var mySocket;
 var curPad = -1;
 
 var hidden = document.getElementById("canhide");
+var hidden2 = document.getElementById("right");
 
 function getOS() {
   var OSName="Unknown OS";
@@ -235,7 +238,7 @@ startButton.onclick = function() {
 		//document.getElementById("elegooHost").disabled = true;
 		//document.getElementById("matchType").disabled = true;
 		hidden.style.display = "none";
-		
+		hidden2.style.display = "none";
 		const rbs = document.querySelectorAll('input[name="gameMode"]');
 		let mode = 'none';
 		for( const rb of rbs ) {
@@ -252,6 +255,7 @@ startButton.onclick = function() {
 		//document.getElementById("elegooHost").disabled = true;
 		//document.getElementById("matchType").disabled = true;
 		hidden.style.display = "block";
+		hidden2.style.display = "block";
 		gameState.stopGame();
 		
 	}
