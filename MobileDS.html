@@ -26,6 +26,7 @@ body {
 <p id="pos">Position</p>
 <label for="elegooHost">Elegoo Host Name:</label>
 <input type="text" id="elegooHost" name="elegooHost" placeholder="Tcp2Elegoo.local">
+</div>
 <br>
 	<div id="matchInfo">
 		<div id="matchType" >
@@ -48,7 +49,7 @@ body {
 		</div>
 	</div>
 <br>
-</div>
+
 <input id="connect" type="button" class="button" value="Connect">
 <input id="startGame" type="button" class="button" value="Start" disabled>
 <div class="right" id="canhide2">Console Output
@@ -154,7 +155,7 @@ var curPad = -1;
 
 var hidden = document.getElementById("canhide");
 var hidden2 = document.getElementById("canhide2");
-
+var hidden3 = document.getElementById("matchInfo");
 function getOS() {
   var OSName="Unknown OS";
 
@@ -239,6 +240,7 @@ startButton.onclick = function() {
 		//document.getElementById("matchType").disabled = true;
 		hidden.style.display = "none";
 		hidden2.style.display = "none";
+		hidden3.style.display = "none";
 		const rbs = document.querySelectorAll('input[name="gameMode"]');
 		let mode = 'none';
 		for( const rb of rbs ) {
@@ -256,6 +258,7 @@ startButton.onclick = function() {
 		//document.getElementById("matchType").disabled = true;
 		hidden.style.display = "block";
 		hidden2.style.display = "block";
+		hidden3.style.display = "block";
 		gameState.stopGame();
 		
 	}
