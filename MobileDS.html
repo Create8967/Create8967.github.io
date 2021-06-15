@@ -16,7 +16,7 @@ body {
 <h1>WWFIRST 2021 Elegoo Competition</h1>
 <p>Mobile DiverStation Ver 0.0.1</p>
 <div id="thedate"></div>
-<p id="pos"></p>
+<p id="pos">Position</p>
 <label for="elegooHost">Elegoo Host Name:</label>
 <input type="text" id="elegooHost" name="elegooHost" placeholder="Tcp2Elegoo.local">
 <br>
@@ -61,6 +61,45 @@ var countDown = document.getElementById('countDown');
 var datefield = document.getElementById('thedate');
 var list = document.getElementById('list');
 var disconnectPending = false;
+	
+//My code - Aidan Fisher
+
+
+let x = 0;
+let y = 0;
+let dx = 0;
+let dy = 0;
+let touching = false;
+const clamp = (n, min, max) => Math.min(Math.max(n, min), max); //Clamp function
+// event.offsetX, event.offsetY gives the (x,y) offset from the edge of the canvas.
+
+// Add the event listeners for mousedown, mousemove, and mouseup
+window.addEventListener('touchstart', e => {
+  touching = true;
+  x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
+  y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
+  dx = clamp(Math.floor(x*127),-127,127);
+  dy = clamp(Math.floor(y*127),-127,127) * -1; //invert
+  document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
+});
+
+window.addEventListener('touchmove', e => {
+  touching = true;
+  x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
+  y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
+  dx = clamp(Math.floor(x*127),-127,127);
+  dy = clamp(Math.floor(y*127),-127,127) * -1; //invert
+  document.getElementById("\").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
+});
+
+window.addEventListener('touchend', e => {
+  touching = false;
+  x = 0;
+  y = 0;
+  dx = clamp(Math.floor(x*127),-127,127);
+  dy = clamp(Math.floor(y*127),-127,127) * -1; //invert
+  document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
+});
 
 function appendToConsole( s ) {
 	var item = list.lastElementChild;
@@ -119,44 +158,7 @@ function getOS() {
 
 var theOS = getOS();
 
-//My code - Aidan Fisher
 
-
-let x = 0;
-let y = 0;
-let dx = 0;
-let dy = 0;
-let touching = false;
-const clamp = (n, min, max) => Math.min(Math.max(n, min), max); //Clamp function
-// event.offsetX, event.offsetY gives the (x,y) offset from the edge of the canvas.
-
-// Add the event listeners for mousedown, mousemove, and mouseup
-window.addEventListener('touchstart', e => {
-  touching = true;
-  x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
-  y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
-  dx = clamp(Math.floor(x*127),-127,127);
-  dy = clamp(Math.floor(y*127),-127,127) * -1; //invert
-  document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
-});
-
-window.addEventListener('touchmove', e => {
-  touching = true;
-  x = (e.touches[0].pageX-window.innerWidth/2)/(window.innerWidth/2);
-  y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
-  dx = clamp(Math.floor(x*127),-127,127);
-  dy = clamp(Math.floor(y*127),-127,127) * -1; //invert
-  document.getElementById("\").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
-});
-
-window.addEventListener('touchend', e => {
-  touching = false;
-  x = 0;
-  y = 0;
-  dx = clamp(Math.floor(x*127),-127,127);
-  dy = clamp(Math.floor(y*127),-127,127) * -1; //invert
-  document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
-});
  
 function packGameData( mode ) {
 	let packet = new ArrayBuffer(16);
