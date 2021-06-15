@@ -89,7 +89,7 @@ window.addEventListener('touchmove', e => {
   y = (e.touches[0].pageY-window.innerHeight/2)/(window.innerHeight/2);
   dx = clamp(Math.floor(x*127),-127,127);
   dy = clamp(Math.floor(y*127),-127,127) * -1; //invert
-  document.getElementById("\").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
+  document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
 });
 
 window.addEventListener('touchend', e => {
