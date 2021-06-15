@@ -227,6 +227,8 @@ function myTimer() {
 
 startButton.onclick = function() {
 	if( gameState.isIdle() ) {
+		document.getElementById("elegooHost").disabled = true;
+		document.getElementById("matchType").disabled = true;
 		const rbs = document.querySelectorAll('input[name="gameMode"]');
 		let mode = 'none';
 		for( const rb of rbs ) {
@@ -239,8 +241,12 @@ startButton.onclick = function() {
 			gameState.startGame( mode );
 		}
 	}
-	else
+	else{
+		document.getElementById("elegooHost").disabled = true;
+		document.getElementById("matchType").disabled = true;
 		gameState.stopGame();
+		
+	}
 }
 
 function isprint(char) {
