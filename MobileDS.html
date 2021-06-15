@@ -100,7 +100,7 @@ window.addEventListener('touchend', e => {
   dy = clamp(Math.floor(y*127),-127,127) * -1; //invert
   document.getElementById("pos").innerHTML = "DX: " + dx +", DY: " + dy + ", Touching: " + touching;
 });
-
+/*
 function appendToConsole( s ) {
 	var item = list.lastElementChild;
 	item.innerHTML = s;
@@ -221,20 +221,6 @@ function myTimer() {
 	}
 
 }
-/*
-window.addEventListener("gamepadconnected", function(e) {
-	var gp = navigator.getGamepads()[e.gamepad.index];
-	pad = e.gamepad.index;
-	var sel = document.getElementById('controllerSelect');
-	var item = document.createElement('option');
-	item.innerHTML = gp.id;
-	item.value = gp.index + 1;
-	sel.appendChild( item );
-	if( sel.length == 2 ) {
-		sel.value = 1;
-	}
-});*/
-
 
 startButton.onclick = function() {
 	if( gameState.isIdle() ) {
@@ -269,11 +255,7 @@ function disconnectElegoo() {
 
 connectButton.onclick = function() {
 	if( tmr == -1 ) {
-		var ctrlr = document.getElementById('controllerSelect');
-		/*if (ctrlr.value == 0 ) {
-			alert( "You must select a game controller");
-			return;
-		}*/ //no.
+		
 
 		if( storageAvailable('localStorage')) {
 			localStorage.setItem('elegooHost', elegooHost.value );
@@ -365,7 +347,7 @@ if ('serviceWorker' in navigator) {
   }).catch(function(error) {
 //    console.log('ServiceWorker registration failed:', error);
   });
-}
+}*/
 </script>
 </body>
 
