@@ -19,6 +19,7 @@ body {
 }
 </style>
 <body>
+<div id="canhide">
 <h1>WWFIRST 2021 Elegoo Competition</h1>
 <p>Mobile DiverStation Ver 0.0.1</p>
 <div id="thedate"></div>
@@ -47,6 +48,7 @@ body {
 		</div>
 	</div>
 <br>
+</div>
 <input id="connect" type="button" class="button" value="Connect">
 <input id="startGame" type="button" class="button" value="Start" disabled>
 <div class="right">Console Output
@@ -148,7 +150,7 @@ var mySocket;
 
 var curPad = -1;
 
-
+var hidden = document.getElementById("canhide");
 
 function getOS() {
   var OSName="Unknown OS";
@@ -230,8 +232,10 @@ function myTimer() {
 
 startButton.onclick = function() {
 	if( gameState.isIdle() ) {
-		document.getElementById("elegooHost").disabled = true;
-		document.getElementById("matchType").disabled = true;
+		//document.getElementById("elegooHost").disabled = true;
+		//document.getElementById("matchType").disabled = true;
+		hidden.style.display = "none";
+		
 		const rbs = document.querySelectorAll('input[name="gameMode"]');
 		let mode = 'none';
 		for( const rb of rbs ) {
@@ -245,8 +249,9 @@ startButton.onclick = function() {
 		}
 	}
 	else{
-		document.getElementById("elegooHost").disabled = true;
-		document.getElementById("matchType").disabled = true;
+		//document.getElementById("elegooHost").disabled = true;
+		//document.getElementById("matchType").disabled = true;
+		hidden.style.display = "block";
 		gameState.stopGame();
 		
 	}
