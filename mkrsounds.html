@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+<label for="device">MKR ip:</label>
+<input type="text" id="device" name="device" placeholder="">
+<input id="connect" type="button" class="button" value="Connect">
+<p id="freq">Frequncy</p>
+</body>
+<script>
+var conect = document.getElementById('connect');
+var ipAddr = document.getElementById('device');
+var socket;
+var isConnected = false;
+let x = 0;
+let y = 0;
+let freq = 262; //C4
+conect.onclick() = function() {
+	if(isConnected == false) {
+		if(storageAvailable('localStorage') {
+			localStorage.setItem('device',ipAddr.value);
+		}
+		try {
+			socket = new WebSocket("wss://"+ipAddr.value+":34");
+			socket.onerror = function(evnt) { alert("Could not connect to ip") };
+			socket.onopen = function(evnt) {
+				isConnected = true;
+				conect.value = "Disconnect";
+			}
+		}
+	}
+	else {
+		socket.close();
+		isConnected = false;
+		conect.value = "Connect";
+	}
+}
+window.addEventListener('touchstart', e => {
+  x = e.touches[0].pageX;
+  y = e.touches[0].pageY;
+  freq = 262+(x/window.innerWidth)*261; //range of frequencies
+  document.getElementById("freq").innerHTML = freq;
+  if(isConnected) {
+	socket.send(freq+"*");
+  }
+});
+window.addEventListener('touchmove', e => {
+  x = e.touches[0].pageX;
+  y = e.touches[0].pageY;
+  freq = 262+(x/window.innerWidth)*261; //range of frequencies
+  document.getElementById("freq").innerHTML = freq;
+  if(isConnected) {
+	socket.send(freq+"*");
+  }
+});
+
+window.addEventListener('touchend', e => {
+  x = e.touches[0].pageX;
+  y = e.touches[0].pageY;
+  freq = 0; //range of frequencies
+  document.getElementById("freq").innerHTML = freq;
+  if(isConnected) {
+	socket.send(freq+"*");
+  }
+});
+
+</script>
+</html>
